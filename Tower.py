@@ -5,6 +5,7 @@ import random
 random.seed()
 
 maxEnemyStrength = 10
+maxEnemies = 3
 
 
 # start the player as value 1
@@ -13,11 +14,16 @@ isAlive = True
 
 tower = [[1]]
 
-for floor in range( random.randint(5,15) ):
+targetValue = player   # starting value is the same as the player
+for floor in range( random.randint(5,20) ):
 	enemies = []
-	for numEnemies in range( random.randint(1,3) ):
-		enemies.append( random.uniform( 1, maxEnemyStrength ) )
+	for numEnemies in range( random.randint( 1, min( targetValue, maxEnemies ) ) ):
+		enemies.append( random.uniform( 1, min( targetValue, maxEnemyStrength ) ) )
 	tower.append( enemies )
+	targetValue += sum( enemies )
+
+random.shuffle( tower )
+
 
 while isAlive and len( tower ) > 0:
 	# Find the max number of enemies in a floor in the tower
@@ -35,6 +41,8 @@ while isAlive and len( tower ) > 0:
 	while not isValidFloor:
 		attackFloor = int( input( "You are strength (%2d). Which floor do you want to attack? " % ( int( player, ) ) ) )
 		isValidFloor = ( attackFloor >= 0 and attackFloor < len( tower ) )
+		if not isValidFloor:
+			print( "Your choice of %d is not valid.  Please choose again." )
 
 	floorStrength = sum( tower[ attackFloor ] )
 	if player >= floorStrength:
@@ -44,4 +52,7 @@ while isAlive and len( tower ) > 0:
 		isAlive = False
 
 # Game is over
-print( "You have beaten the tower.")
+if isAlive:
+	print( "You have beaten the tower." )
+else:
+	print( "You have died trying." )
